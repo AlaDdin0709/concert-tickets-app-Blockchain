@@ -1,0 +1,55 @@
+{
+  "name": "concert-tickets-dapp",
+  "version": "1.0.0",
+  "description": "DApp de billetterie pour concerts utilisant des NFTs sur blockchain",
+  "main": "index.js",
+  "scripts": {
+    "compile": "truffle compile",
+    "migrate": "truffle migrate --reset",
+    "test": "truffle test",
+    "console": "truffle console",
+    "ganache": "ganache-cli -p 8545 -m 'concert tickets blockchain ethereum solidity truffle ganache metamask web3'",
+    "dev": "npm run migrate && npm run test",
+    "deploy:sepolia": "truffle migrate --network sepolia",
+    "verify": "truffle run verify"
+  },
+  "keywords": [
+    "blockchain",
+    "ethereum",
+    "solidity",
+    "truffle",
+    "nft",
+    "concert",
+    "tickets",
+    "dapp",
+    "web3"
+  ],
+  "author": "Développeur Blockchain",
+  "license": "MIT",
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.0",
+    "@truffle/hdwallet-provider": "^2.1.0",
+    "dotenv": "^16.0.0",
+    "web3": "^1.10.0"
+  },
+  "devDependencies": {
+    "truffle": "^5.11.0",
+    "ganache": "^7.9.0",
+    "truffle-plugin-verify": "^0.5.0",
+    "@truffle/test-helpers": "^0.5.0",
+    "chai": "^4.3.0",
+    "mocha": "^10.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/username/concert-tickets-dapp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/username/concert-tickets-dapp/issues"
+  },
+  "homepage": "https://github.com/username/concert-tickets-dapp#readme"
+}
