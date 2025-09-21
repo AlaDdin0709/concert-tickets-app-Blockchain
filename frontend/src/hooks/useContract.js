@@ -24,21 +24,37 @@ export const useContract = () => {
       return {};
     }
 
-    return {
+  return {
       // Créer un événement
       createEvent: async (name, venue, date, price, totalSeats) => {
         try {
           const priceInWei = web3.utils.toWei(price.toString(), 'ether');
           const dateTimestamp = Math.floor(new Date(date).getTime() / 1000);
-          
+          // Log all parameters before sending
+          console.log('createEvent params:', {
+            name,
+            venue,
+            date,
+            dateTimestamp,
+            price,
+            priceInWei,
+            totalSeats,
+            currentAccount
+          });
           const result = await contract.methods
             .createEvent(name, venue, dateTimestamp, priceInWei, totalSeats)
             .send({ from: currentAccount });
-            
           console.log('✅ Événement créé:', result);
           return result;
         } catch (error) {
-          console.error('❌ Erreur création événement:', error);
+          // Log more details if available
+          if (error && error.data) {
+            console.error('❌ Erreur création événement (data):', error.data);
+          }
+          if (error && error.message) {
+            console.error('❌ Erreur création événement (message):', error.message);
+          }
+          console.error('❌ Erreur création événement (full error):', error);
           throw error;
         }
       },
@@ -136,6 +152,26 @@ export const useContract = () => {
           return verification;
         } catch (error) {
           console.error('❌ Erreur vérification billet:', error);
+          throw error;
+        }
+      },
+      // Transférer un ticket à un autre utilisateur
+      transferTicket: async (ticketId, toAddress) => {
+        try {
+          // Le propriétaire actuel doit être currentAccount
+          const result = await contract.methods
+            .transferFrom(currentAccount, toAddress, ticketId)
+            .send({ from: currentAccount });
+          console.log('✅ Ticket transféré:', result);
+          return result;
+        } catch (error) {
+          if (error && error.data) {
+            console.error('❌ Erreur transfert ticket (data):', error.data);
+          }
+          if (error && error.message) {
+            console.error('❌ Erreur transfert ticket (message):', error.message);
+          }
+          console.error('❌ Erreur transfert ticket (full error):', error);
           throw error;
         }
       }

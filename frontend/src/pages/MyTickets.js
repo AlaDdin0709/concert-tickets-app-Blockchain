@@ -1,15 +1,16 @@
+// src/pages/MyTickets.js
 import React, { useState, useEffect } from 'react';
 import {
   Typography,
   Box,
   Grid,
   Paper,
-  CircularProgress,
+  Button,
   Card,
   CardContent,
-  Button,
   Chip,
-  Divider
+  Divider,
+  CircularProgress
 } from '@mui/material';
 import {
   QrCode,
@@ -26,14 +27,13 @@ import { useContract } from '../hooks/useContract';
 const MyTickets = () => {
   const { isConnected } = useWeb3Context();
   const { getUserTickets, markTicketAsUsed } = useContract();
-  
+
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Charger les billets de l'utilisateur - fonction simple
   const loadUserTickets = async () => {
     if (!isConnected || !getUserTickets) return;
-    
+
     try {
       setLoading(true);
       const userTickets = await getUserTickets();
@@ -46,20 +46,16 @@ const MyTickets = () => {
     }
   };
 
-  // useEffect simple
   useEffect(() => {
     if (isConnected && getUserTickets) {
       loadUserTickets();
     }
-  }, [isConnected]); // Seule dépendance: isConnected
+  }, [isConnected]);
 
-  // Fonction pour utiliser un billet
   const handleUseTicket = async (ticketId) => {
     try {
       await markTicketAsUsed(ticketId);
       toast.success('Billet utilisé avec succès !');
-      
-      // Recharger après un délai
       setTimeout(() => {
         loadUserTickets();
       }, 1000);
@@ -84,11 +80,33 @@ const MyTickets = () => {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h4">
+      <Box sx={{
+        mb: 4,
+        py: 2,
+        px: 3,
+        background: 'linear-gradient(90deg, #2196F3 0%, #21CBF3 100%)',
+        borderRadius: 3,
+        boxShadow: 2,
+        color: 'white',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}>
+        <Typography variant="h5" fontWeight="bold">
           🎫 Mes billets
         </Typography>
-        <Button variant="outlined" onClick={loadUserTickets}>
+        <Button
+          variant="contained"
+          onClick={loadUserTickets}
+          sx={{
+            backgroundColor: 'white',
+            color: '#2196F3',
+            fontWeight: 'bold',
+            '&:hover': {
+              backgroundColor: '#f0f0f0'
+            }
+          }}
+        >
           Actualiser
         </Button>
       </Box>
@@ -101,7 +119,13 @@ const MyTickets = () => {
         <Grid container spacing={3}>
           {tickets.length === 0 ? (
             <Grid item xs={12}>
-              <Paper sx={{ p: 4, textAlign: 'center' }}>
+              <Paper sx={{
+                p: 4,
+                textAlign: 'center',
+                borderRadius: 3,
+                backgroundColor: '#f9f9f9',
+                boxShadow: 2
+              }}>
                 <Typography variant="h6" color="text.secondary">
                   Vous n'avez aucun billet pour le moment
                 </Typography>
@@ -113,7 +137,17 @@ const MyTickets = () => {
           ) : (
             tickets.map((ticket) => (
               <Grid item xs={12} sm={6} md={4} key={ticket.id}>
-                <Card sx={{ height: '100%' }}>
+                <Card sx={{
+                  height: '100%',
+                  borderRadius: 3,
+                  background: 'linear-gradient(135deg, #ffffff 0%, #e3f2fd 100%)',
+                  boxShadow: 3,
+                  transition: 'transform 0.3s',
+                  '&:hover': {
+                    transform: 'translateY(-4px)',
+                    boxShadow: 6
+                  }
+                }}>
                   <CardContent>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                       <Typography variant="h6">
@@ -125,41 +159,47 @@ const MyTickets = () => {
                         size="small"
                       />
                     </Box>
-                    
+
                     <Typography variant="subtitle1" gutterBottom>
                       🎵 {ticket.event.name}
                     </Typography>
-                    
+
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <LocationOn color="action" sx={{ mr: 1, fontSize: 20 }} />
                       <Typography variant="body2" color="text.secondary">
                         {ticket.event.venue}
                       </Typography>
                     </Box>
-                    
+
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <EventIcon color="action" sx={{ mr: 1, fontSize: 20 }} />
                       <Typography variant="body2" color="text.secondary">
                         {moment(ticket.event.date).format('DD/MM/YYYY HH:mm')}
                       </Typography>
                     </Box>
-                    
+
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                       <ConfirmationNumber color="action" sx={{ mr: 1, fontSize: 20 }} />
                       <Typography variant="body2" color="text.secondary">
                         Siège #{ticket.seatNumber}
                       </Typography>
                     </Box>
-                    
+
                     <Divider sx={{ my: 2 }} />
-                    
+
                     <Button
-                      variant="outlined"
+                      variant="contained"
                       fullWidth
                       startIcon={<QrCode />}
                       disabled={ticket.isUsed}
                       onClick={() => handleUseTicket(ticket.id)}
-                      sx={{ mb: 1 }}
+                      sx={{
+                        background: ticket.isUsed
+                          ? '#cfd8dc'
+                          : 'linear-gradient(45deg, #66bb6a 30%, #43a047 90%)',
+                        color: 'white',
+                        fontWeight: 'bold'
+                      }}
                     >
                       {ticket.isUsed ? 'Billet utilisé' : 'Utiliser le billet'}
                     </Button>

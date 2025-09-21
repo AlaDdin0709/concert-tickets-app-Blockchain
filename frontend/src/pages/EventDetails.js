@@ -1,3 +1,4 @@
+// src/pages/EventDetails.js
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import {
@@ -18,8 +19,7 @@ import {
 import {
   LocationOn,
   Event as EventIcon,
-  Payment,
-  People
+  Payment
 } from '@mui/icons-material';
 import toast from 'react-hot-toast';
 import moment from 'moment';
@@ -31,31 +31,28 @@ const EventDetails = () => {
   const { id } = useParams();
   const { isConnected, web3 } = useWeb3Context();
   const { getActiveEvents, purchaseTicket, contract } = useContract();
-  
+
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(false);
   const [purchaseDialogOpen, setPurchaseDialogOpen] = useState(false);
   const [seatNumber, setSeatNumber] = useState('');
   const [purchasing, setPurchasing] = useState(false);
 
-  // Charger les détails de l'événement
   const loadEventDetails = async () => {
     if (!isConnected || !contract) return;
-    
+
     try {
       setLoading(true);
       const eventData = await contract.methods.getEvent(id).call();
-      
       const eventDetails = {
         ...eventData,
         id: id,
         ticketPrice: web3.utils.fromWei(eventData.ticketPrice, 'ether'),
         date: new Date(parseInt(eventData.date) * 1000)
       };
-      
       setEvent(eventDetails);
     } catch (error) {
-      toast.error('Erreur lors du chargement de l\'événement');
+      toast.error("Erreur lors du chargement de l'événement");
       console.error(error);
     } finally {
       setLoading(false);
@@ -68,16 +65,17 @@ const EventDetails = () => {
 
   const handlePurchase = async () => {
     if (!seatNumber || !event) return;
-    
+
     try {
       setPurchasing(true);
       await purchaseTicket(event.id, parseInt(seatNumber), event.ticketPrice);
       toast.success(`Billet acheté avec succès ! Siège ${seatNumber}`);
       setPurchaseDialogOpen(false);
       setSeatNumber('');
-      loadEventDetails(); // Recharger les détails
+      loadEventDetails();
     } catch (error) {
-      toast.error('Erreur lors de l\'achat du billet');
+      toast.error("Erreur lors de l'achat du billet");
+      console.error(error);
     } finally {
       setPurchasing(false);
     }
@@ -120,34 +118,40 @@ const EventDetails = () => {
 
   return (
     <Box>
-      <Paper sx={{ p: 4, mb: 4 }}>
+      <Paper sx={{
+        p: 4,
+        mb: 4,
+        borderRadius: 4,
+        background: 'linear-gradient(135deg, #ffffff 0%, #f0f8ff 100%)',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+      }}>
         <Grid container spacing={4}>
           <Grid item xs={12} md={8}>
-            <Typography variant="h3" gutterBottom>
+            <Typography variant="h3" gutterBottom sx={{ fontWeight: 'bold' }}>
               🎵 {event.name}
             </Typography>
-            
+
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
               <LocationOn color="action" sx={{ mr: 1 }} />
               <Typography variant="h6" color="text.secondary">
                 {event.venue}
               </Typography>
             </Box>
-            
+
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
               <EventIcon color="action" sx={{ mr: 1 }} />
               <Typography variant="h6" color="text.secondary">
                 {moment(event.date).format('DD/MM/YYYY HH:mm')}
               </Typography>
             </Box>
-            
+
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
               <Payment color="action" sx={{ mr: 1 }} />
               <Typography variant="h6" color="text.secondary">
                 {event.ticketPrice} ETH par billet
               </Typography>
             </Box>
-            
+
             <Box sx={{ mb: 3 }}>
               <Typography variant="h6" gutterBottom>
                 📊 Disponibilité
@@ -160,12 +164,12 @@ const EventDetails = () => {
                   {progressValue.toFixed(1)}%
                 </Typography>
               </Box>
-              <LinearProgress 
-                variant="determinate" 
+              <LinearProgress
+                variant="determinate"
                 value={progressValue}
-                sx={{ height: 10, borderRadius: 5, mb: 2 }}
+                sx={{ height: 12, borderRadius: 6, mb: 2 }}
               />
-              
+
               <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                 {isEventPassed && (
                   <Chip label="Événement passé" color="error" />
@@ -174,29 +178,31 @@ const EventDetails = () => {
                   <Chip label="Complet" color="warning" />
                 )}
                 {availableSeats > 0 && !isEventPassed && (
-                  <Chip 
-                    label={`${availableSeats} places disponibles`} 
-                    color="success" 
-                  />
+                  <Chip label={`${availableSeats} places disponibles`} color="success" />
                 )}
               </Box>
             </Box>
           </Grid>
-          
+
           <Grid item xs={12} md={4}>
-            <Paper sx={{ p: 3, backgroundColor: '#f5f5f5' }}>
+            <Paper sx={{
+              p: 3,
+              backgroundColor: '#e3f2fd',
+              borderRadius: 3,
+              boxShadow: 2
+            }}>
               <Typography variant="h6" gutterBottom>
                 💳 Achat de billet
               </Typography>
-              
+
               <Typography variant="body2" color="text.secondary" paragraph>
                 Prix: <strong>{event.ticketPrice} ETH</strong>
               </Typography>
-              
+
               <Typography variant="body2" color="text.secondary" paragraph>
                 Commission plateforme: 2.5%
               </Typography>
-              
+
               <Button
                 variant="contained"
                 fullWidth
@@ -205,12 +211,16 @@ const EventDetails = () => {
                 onClick={() => setPurchaseDialogOpen(true)}
                 sx={{
                   background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
-                  py: 2
+                  py: 2,
+                  fontWeight: 'bold',
+                  boxShadow: '0 4px 10px rgba(33,150,243,0.3)'
                 }}
               >
-                {isEventPassed ? 'Événement terminé' : 
-                 availableSeats === 0 ? 'Complet' : 
-                 'Acheter un billet'}
+                {isEventPassed
+                  ? 'Événement terminé'
+                  : availableSeats === 0
+                  ? 'Complet'
+                  : 'Acheter un billet'}
               </Button>
             </Paper>
           </Grid>
@@ -224,15 +234,15 @@ const EventDetails = () => {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>🎫 Acheter un billet</DialogTitle>
-        <DialogContent>
+        <DialogTitle sx={{ backgroundColor: '#f0f8ff' }}>🎫 Acheter un billet</DialogTitle>
+        <DialogContent sx={{ backgroundColor: '#fafafa' }}>
           <Typography variant="body1" paragraph>
             Événement: <strong>{event.name}</strong>
           </Typography>
           <Typography variant="body2" color="text.secondary" paragraph>
             Prix: {event.ticketPrice} ETH
           </Typography>
-          
+
           <TextField
             fullWidth
             label="Numéro de siège"
@@ -243,12 +253,12 @@ const EventDetails = () => {
             inputProps={{ min: 1, max: event.totalSeats }}
             margin="normal"
           />
-          
+
           <Typography variant="caption" color="text.secondary">
             Choisissez un numéro de siège entre 1 et {event.totalSeats}
           </Typography>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ backgroundColor: '#f0f0f0' }}>
           <Button onClick={() => setPurchaseDialogOpen(false)}>
             Annuler
           </Button>
@@ -256,6 +266,10 @@ const EventDetails = () => {
             onClick={handlePurchase}
             variant="contained"
             disabled={!seatNumber || purchasing}
+            sx={{
+              background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+              fontWeight: 'bold'
+            }}
           >
             {purchasing ? 'Achat en cours...' : 'Acheter'}
           </Button>

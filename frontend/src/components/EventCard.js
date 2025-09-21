@@ -1,3 +1,4 @@
+// src/components/EventCard.js
 import React from 'react';
 import {
   Card,
@@ -23,60 +24,64 @@ const EventCard = ({ event, onPurchaseClick }) => {
   const availableSeats = parseInt(event.totalSeats) - parseInt(event.soldTickets);
 
   return (
-    <Card 
-      sx={{ 
-        height: '100%', 
-        display: 'flex', 
+    <Card
+      sx={{
+        height: '100%',
+        display: 'flex',
         flexDirection: 'column',
-        transition: 'transform 0.2s, box-shadow 0.2s',
+        borderRadius: 4,
+        background: 'linear-gradient(135deg, #ffffff 0%, #f0f8ff 100%)',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+        transition: 'transform 0.3s ease, box-shadow 0.3s ease',
         '&:hover': {
-          transform: 'translateY(-4px)',
-          boxShadow: 6
+          transform: 'translateY(-6px)',
+          boxShadow: '0 6px 20px rgba(0,0,0,0.12)'
         }
       }}
     >
       <CardContent sx={{ flexGrow: 1 }}>
-        <Typography variant="h6" component="h2" gutterBottom>
+        <Typography variant="h6" component="h2" gutterBottom fontWeight="bold">
           🎵 {event.name}
         </Typography>
-        
+
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
           <LocationOn color="action" sx={{ mr: 1, fontSize: 20 }} />
           <Typography variant="body2" color="text.secondary">
             {event.venue}
           </Typography>
         </Box>
-        
+
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
           <EventIcon color="action" sx={{ mr: 1, fontSize: 20 }} />
           <Typography variant="body2" color="text.secondary">
             {moment(event.date).format('DD/MM/YYYY HH:mm')}
           </Typography>
         </Box>
-        
+
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
           <Payment color="action" sx={{ mr: 1, fontSize: 20 }} />
           <Typography variant="body2" color="text.secondary">
             {event.ticketPrice} ETH
           </Typography>
         </Box>
-        
+
         <Box sx={{ mb: 2 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-            <Typography variant="body2">
+            <Typography variant="body2" color="text.secondary">
               Billets vendus: {event.soldTickets}/{event.totalSeats}
             </Typography>
-            <Typography variant="body2">
+            <Typography variant="body2" color="text.secondary">
               {progressValue.toFixed(1)}%
             </Typography>
           </Box>
-          <LinearProgress 
-            variant="determinate" 
+          <LinearProgress
+            variant="determinate"
             value={progressValue}
             sx={{ height: 8, borderRadius: 4 }}
+            color="primary"
           />
         </Box>
-        
+
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
           {isEventPassed && (
             <Chip label="Événement passé" color="error" size="small" />
@@ -85,16 +90,16 @@ const EventCard = ({ event, onPurchaseClick }) => {
             <Chip label="Complet" color="warning" size="small" />
           )}
           {availableSeats > 0 && !isEventPassed && (
-            <Chip 
-              label={`${availableSeats} places disponibles`} 
-              color="success" 
-              size="small" 
+            <Chip
+              label={`${availableSeats} places disponibles`}
+              color="success"
+              size="small"
             />
           )}
         </Box>
       </CardContent>
-      
-      <CardActions>
+
+      <CardActions sx={{ p: 2, pt: 0 }}>
         <Button
           variant="contained"
           fullWidth
@@ -102,14 +107,17 @@ const EventCard = ({ event, onPurchaseClick }) => {
           onClick={() => onPurchaseClick(event)}
           sx={{
             background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+            fontWeight: 'bold',
             '&:hover': {
               background: 'linear-gradient(45deg, #1976D2 30%, #0288D1 90%)'
             }
           }}
         >
-          {isEventPassed ? 'Événement terminé' : 
-           availableSeats === 0 ? 'Complet' : 
-           'Acheter un billet'}
+          {isEventPassed
+            ? 'Événement terminé'
+            : availableSeats === 0
+            ? 'Complet'
+            : 'Acheter un billet'}
         </Button>
       </CardActions>
     </Card>

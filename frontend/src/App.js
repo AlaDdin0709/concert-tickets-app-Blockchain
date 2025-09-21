@@ -10,6 +10,7 @@ import Home from './pages/Home';
 import Events from './pages/Events';
 import MyTickets from './pages/MyTickets';
 import EventDetails from './pages/EventDetails';
+import TransferTicket from './pages/TransferTicket';
 
 const theme = createTheme({
   palette: {
@@ -48,6 +49,8 @@ function App() {
                 <Route path="/events" element={<Events />} />
                 <Route path="/my-tickets" element={<MyTickets />} />
                 <Route path="/event/:id" element={<EventDetails />} />
+                <Route path="/transfer" element={<TransferTicket />} />
+                <Route path="/transfer/:ticketId" element={<TransferTicket />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </Container>

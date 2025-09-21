@@ -1,3 +1,4 @@
+// src/pages/Home.js
 import React, { useState, useEffect } from 'react';
 import {
   Typography,
@@ -34,10 +35,8 @@ const Home = () => {
     totalSeats: ''
   });
 
-  // Charger les événements - fonction simple sans useCallback
   const loadEvents = async () => {
     if (!isConnected || !getActiveEvents) return;
-    
     try {
       setLoading(true);
       const activeEvents = await getActiveEvents();
@@ -50,14 +49,12 @@ const Home = () => {
     }
   };
 
-  // useEffect simple avec des dépendances fixes
   useEffect(() => {
     if (isConnected && getActiveEvents) {
       loadEvents();
     }
-  }, [isConnected]); // Seule dépendance: isConnected
+  }, [isConnected]);
 
-  // Créer un événement
   const handleCreateEvent = async () => {
     try {
       await createEvent(
@@ -67,12 +64,9 @@ const Home = () => {
         eventForm.price,
         parseInt(eventForm.totalSeats)
       );
-      
       toast.success('Événement créé avec succès !');
       setCreateDialogOpen(false);
       setEventForm({ name: '', venue: '', date: '', price: '', totalSeats: '' });
-      
-      // Recharger les événements après un délai
       setTimeout(() => {
         loadEvents();
       }, 1000);
@@ -101,8 +95,18 @@ const Home = () => {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h4">
+      <Box sx={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        mb: 4,
+        p: 2,
+        background: 'linear-gradient(90deg, #2196F3 0%, #21CBF3 100%)',
+        borderRadius: 3,
+        color: 'white',
+        boxShadow: 2
+      }}>
+        <Typography variant="h5" fontWeight="bold">
           🎪 Événements en cours
         </Typography>
         <Button
@@ -110,7 +114,12 @@ const Home = () => {
           startIcon={<AddIcon />}
           onClick={() => setCreateDialogOpen(true)}
           sx={{
-            background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+            background: 'white',
+            color: '#2196F3',
+            fontWeight: 'bold',
+            '&:hover': {
+              backgroundColor: '#f5f5f5'
+            }
           }}
         >
           Créer un événement
@@ -125,7 +134,7 @@ const Home = () => {
         <Grid container spacing={3}>
           {events.length === 0 ? (
             <Grid item xs={12}>
-              <Paper sx={{ p: 4, textAlign: 'center' }}>
+              <Paper sx={{ p: 4, textAlign: 'center', borderRadius: 3 }}>
                 <Typography variant="h6" color="text.secondary">
                   Aucun événement disponible pour le moment
                 </Typography>
@@ -158,8 +167,8 @@ const Home = () => {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>🎪 Créer un nouvel événement</DialogTitle>
-        <DialogContent>
+        <DialogTitle sx={{ backgroundColor: '#f0f8ff' }}>🎪 Créer un nouvel événement</DialogTitle>
+        <DialogContent sx={{ backgroundColor: '#fafafa' }}>
           <Box sx={{ pt: 1 }}>
             <TextField
               fullWidth
@@ -208,14 +217,24 @@ const Home = () => {
             />
           </Box>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ backgroundColor: '#f0f0f0' }}>
           <Button onClick={() => setCreateDialogOpen(false)}>
             Annuler
           </Button>
           <Button
             onClick={handleCreateEvent}
             variant="contained"
-            disabled={!eventForm.name || !eventForm.venue || !eventForm.date || !eventForm.price || !eventForm.totalSeats}
+            sx={{
+              background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+              fontWeight: 'bold'
+            }}
+            disabled={
+              !eventForm.name ||
+              !eventForm.venue ||
+              !eventForm.date ||
+              !eventForm.price ||
+              !eventForm.totalSeats
+            }
           >
             Créer
           </Button>

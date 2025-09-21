@@ -1,3 +1,4 @@
+// src/pages/Events.js
 import React, { useState, useEffect } from 'react';
 import {
   Typography,
@@ -16,14 +17,13 @@ import EventCard from '../components/EventCard';
 const Events = () => {
   const { isConnected } = useWeb3Context();
   const { getActiveEvents } = useContract();
-  
+
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Charger les événements - fonction simple
   const loadEvents = async () => {
     if (!isConnected || !getActiveEvents) return;
-    
+
     try {
       setLoading(true);
       const activeEvents = await getActiveEvents();
@@ -36,12 +36,11 @@ const Events = () => {
     }
   };
 
-  // useEffect simple
   useEffect(() => {
     if (isConnected && getActiveEvents) {
       loadEvents();
     }
-  }, [isConnected]); // Seule dépendance: isConnected
+  }, [isConnected]);
 
   const handlePurchaseClick = (event) => {
     window.location.href = `/event/${event.id}`;
@@ -62,11 +61,33 @@ const Events = () => {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h4">
+      <Box sx={{
+        mb: 4,
+        py: 2,
+        px: 3,
+        background: 'linear-gradient(90deg, #2196F3 0%, #21CBF3 100%)',
+        borderRadius: 3,
+        boxShadow: 2,
+        color: 'white',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}>
+        <Typography variant="h5" fontWeight="bold">
           🎪 Tous les événements
         </Typography>
-        <Button variant="outlined" onClick={loadEvents}>
+        <Button
+          variant="contained"
+          onClick={loadEvents}
+          sx={{
+            backgroundColor: 'white',
+            color: '#2196F3',
+            fontWeight: 'bold',
+            '&:hover': {
+              backgroundColor: '#f0f0f0'
+            }
+          }}
+        >
           Actualiser
         </Button>
       </Box>
@@ -79,7 +100,13 @@ const Events = () => {
         <Grid container spacing={3}>
           {events.length === 0 ? (
             <Grid item xs={12}>
-              <Paper sx={{ p: 4, textAlign: 'center' }}>
+              <Paper sx={{
+                p: 4,
+                textAlign: 'center',
+                borderRadius: 3,
+                backgroundColor: '#f9f9f9',
+                boxShadow: 2
+              }}>
                 <Typography variant="h6" color="text.secondary">
                   Aucun événement disponible pour le moment
                 </Typography>
