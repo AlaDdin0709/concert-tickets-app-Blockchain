@@ -53,6 +53,7 @@ module.exports = {
     "truffle-plugin-verify"  // Pour vérifier les contrats sur Etherscan
   ],
 
+  
   // Configuration des tests
   mocha: {
     timeout: 100000,
